@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func Main() {
+func Run() {
 	ctx := context.Background()
 
 	cli, err := client.NewClientWithOpts(client.FromEnv)

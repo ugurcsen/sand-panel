@@ -19,7 +19,7 @@ func Run() {
 		os.Exit(1)
 	}
 
-	// List all containers
+	// List all container-engines
 	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{All: true})
 	errorCheck(err)
 	var stat types.ContainerStats

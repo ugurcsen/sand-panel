@@ -2,23 +2,13 @@ package api
 
 import (
 	"github.com/kataras/iris/v12"
-	"strconv"
 )
 
+type httpApi struct {
+}
+
 func Run(port int) {
-	app := iris.New()
 
-	booksAPI := app.Party("/books")
-	{
-		booksAPI.Use(iris.Compression)
-
-		// GET: http://localhost:8080/books
-		booksAPI.Get("/", list)
-		// POST: http://localhost:8080/books
-		booksAPI.Post("/", create)
-	}
-
-	app.Listen(":" + strconv.Itoa(port))
 }
 
 // Book example.

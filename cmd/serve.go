@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/ugurcsen/sand-panel/api"
+	"github.com/ugurcsen/sand-panel/internal/api/rest"
+	"github.com/ugurcsen/sand-panel/internal/core/services/user_service"
+	"github.com/ugurcsen/sand-panel/internal/repositories/postgresql"
+	"net"
 )
 
 var (
@@ -21,7 +25,21 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Println("serve called")
-		api.Run(port)
+		rps := postgresql.NewPostgresqlRepository()
+		srv := user_service.NewUserService(rps)
+		_ = srv
+		tcp, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+		if err != nil {
+			cmd.PrintErr(err)
+			return
+		}
+		restApi, err := rest.NewRest(rest.Options{
+			Listener: tcp,
+		})
+		if err != nil {
+			panic(err)
+		}
+		restApi.Listen()
 	},
 }
 

@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/docker/docker v20.10.21+incompatible
 	github.com/kataras/iris/v12 v12.2.0-beta6.0.20221212233715-1ea5cd58be28
+	github.com/lib/pq v1.10.7
 	github.com/spf13/cobra v1.6.1
 )
 

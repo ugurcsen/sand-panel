@@ -1,49 +1,65 @@
 package api
 
 import (
-	"github.com/kataras/iris/v12"
+	"fmt"
+	"github.com/ugurcsen/sand-panel/internal/api/grpc"
+	"github.com/ugurcsen/sand-panel/internal/api/rest"
+	"github.com/ugurcsen/sand-panel/internal/core/services/user_service"
+	"github.com/ugurcsen/sand-panel/internal/repositories/postgresql"
+	"net"
 )
 
-type httpApi struct {
-}
-
-func Run(port int) {
-
-}
-
-// Book example.
-type Book struct {
-	Title string `json:"title"`
-}
-
-func list(ctx iris.Context) {
-	books := []Book{
-		{"Mastering Concurrency in Go"},
-		{"Go Design Patterns"},
-		{"Black Hat Go"},
-	}
-
-	ctx.JSON(books)
-	// TIP: negotiate the response between server's prioritizes
-	// and client's requirements, instead of ctx.JSON:
-	// ctx.Negotiation().JSON().MsgPack().Protobuf()
-	// ctx.Negotiate(books)
-}
-
-func create(ctx iris.Context) {
-	var b Book
-	err := ctx.ReadJSON(&b)
-	// TIP: use ctx.ReadBody(&b) to bind
-	// any type of incoming data instead.
+func RunRest(port uint16) error {
+	rps, _ := postgresql.NewUserRepository()
+	srv := user_service.NewUserService(rps)
+	tcp, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	defer tcp.Close()
+	restApi, err := rest.NewRest(&rest.Options{
+		Listener: tcp,
+	})
 	if err != nil {
-		ctx.StopWithProblem(iris.StatusBadRequest, iris.NewProblem().
-			Title("Book creation failure").DetailErr(err))
-		// TIP: use ctx.StopWithError(code, err) when only
-		// plain text responses are expected on errors.
-		return
+		return err
 	}
 
-	println("Received Book: " + b.Title)
+	err = restApi.RegisterServices(&rest.Services{
+		UserService: srv,
+	})
+	if err != nil {
+		return err
+	}
 
-	ctx.StatusCode(iris.StatusCreated)
+	err = restApi.Listen()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func RunGrpc(port uint16) error {
+	rps, _ := postgresql.NewUserRepository()
+	srv := user_service.NewUserService(rps)
+	tcp, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	defer tcp.Close()
+	if err != nil {
+		return err
+	}
+	grpcApi, err := grpc.NewGrpc(&grpc.Options{Listener: tcp})
+	if err != nil {
+		return err
+	}
+
+	err = grpcApi.RegisterServices(&grpc.Services{
+		UserService: srv,
+	})
+	if err != nil {
+		return err
+	}
+
+	err = grpcApi.Listen()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

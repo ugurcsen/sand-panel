@@ -9,14 +9,8 @@ type userService struct {
 	repository ports.UserRepository
 }
 
-func (u userService) NewApp() error {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (u userService) List() ([]*domain.User, error) {
-	//TODO implement me
-	panic("implement me")
+	return u.repository.List()
 }
 
 func NewUserService(repository ports.UserRepository) ports.UserService {

@@ -1,16 +1,13 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/ugurcsen/sand-panel/internal/api/rest"
-	"github.com/ugurcsen/sand-panel/internal/core/services/user_service"
-	"github.com/ugurcsen/sand-panel/internal/repositories/postgresql"
-	"net"
+	"github.com/ugurcsen/sand-panel/internal/api"
 )
 
 var (
-	port int
+	restPort uint16
+	grpcPort uint16
 )
 
 // serveCmd represents the serve command
@@ -25,26 +22,34 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Println("serve called")
-		rps := postgresql.NewPostgresqlRepository()
-		srv := user_service.NewUserService(rps)
-		_ = srv
-		tcp, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
-		if err != nil {
-			cmd.PrintErr(err)
-			return
-		}
-		restApi, err := rest.NewRest(rest.Options{
-			Listener: tcp,
-		})
-		if err != nil {
-			panic(err)
-		}
-		restApi.Listen()
+
+		//Rest API
+		restChan := make(chan error)
+		go func() {
+			err := api.RunRest(restPort)
+			restChan <- err
+		}()
+		//GRPC API
+		grpcChan := make(chan error)
+		go func() {
+			err := api.RunGrpc(grpcPort)
+			grpcChan <- err
+		}()
+
+		err := make(chan error)
+		go func() {
+			err <- <-restChan
+		}()
+		go func() {
+			err <- <-restChan
+		}()
+		cmd.PrintErr(<-err)
 	},
 }
 
 func init() {
-	serveCmd.PersistentFlags().IntVarP(&port, "port", "p", 8080, "Port number")
+	serveCmd.PersistentFlags().Uint16VarP(&restPort, "rest_port", "r", 8000, "Rest Port number")
+	serveCmd.PersistentFlags().Uint16VarP(&grpcPort, "grpc_port", "g", 9000, "gRPC Port number")
 	rootCmd.AddCommand(serveCmd)
 
 	// Here you will define your flags and configuration settings.
@@ -56,4 +61,10 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func errorPanic(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

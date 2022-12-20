@@ -1,42 +1,23 @@
 package postgresql
 
 import (
-	"github.com/ugurcsen/sand-panel/internal/core/domain"
-	"github.com/ugurcsen/sand-panel/internal/core/ports"
+	"database/sql"
+	"fmt"
+	_ "github.com/lib/pq"
+	"github.com/ugurcsen/sand-panel/configs"
 )
 
-type postgresqlRepository struct{}
-
-func NewPostgresqlRepository() ports.UserRepository {
-	return &postgresqlRepository{}
+type db struct {
+	*sql.DB
 }
 
-func (p postgresqlRepository) Get(id int64) (*domain.User, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (p postgresqlRepository) GetByUserNameAndPassword(userName, password string) (*domain.User, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (p postgresqlRepository) List() (*domain.User, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (p postgresqlRepository) Create(user *domain.User) (*domain.User, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (p postgresqlRepository) Update(user *domain.User) (*domain.User, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (p postgresqlRepository) Delete(user *domain.User) error {
-	//TODO implement me
-	panic("implement me")
+func Connect() (*db, error) {
+	DB, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		configs.DatabasePostgreSQL.Host,
+		configs.DatabasePostgreSQL.Port,
+		configs.DatabasePostgreSQL.User,
+		configs.DatabasePostgreSQL.Password,
+		configs.DatabasePostgreSQL.DBName))
+	return &db{DB}, err
 }

@@ -33,7 +33,7 @@ func Run() {
 	go func() {
 		for {
 			err := decoder.Decode(&a)
-			fmt.Println(a.CPUStats.CPUUsage.TotalUsage)
+			fmt.Println(a.MemoryStats.MaxUsage)
 			if err != nil {
 				return
 			}

@@ -58,6 +58,6 @@ func create(ctx iris.Context) {
 	ctx.Writef("Hello from list")
 }
 
-func NewRest(options *Options) (ports.API, error) {
+func NewRest(options *Options) (*rest, error) {
 	return &rest{options: options}, nil
 }

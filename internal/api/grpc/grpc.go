@@ -37,7 +37,7 @@ func (g *grpc) Listen() error {
 	return g.server.Serve(g.options.Listener)
 }
 
-func NewGrpc(options *Options) (ports.API, error) {
+func NewGrpc(options *Options) (*grpc, error) {
 	return &grpc{
 		server:  GRPC.NewServer(GRPC.EmptyServerOption{}),
 		options: options,

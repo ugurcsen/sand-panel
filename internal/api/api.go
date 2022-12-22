@@ -9,6 +9,7 @@ import (
 	"net"
 )
 
+// RunRest runs the rest api
 func RunRest(port uint16) error {
 	rps, _ := postgresql.NewUserRepository()
 	srv := user_service.NewUserService(rps)
@@ -36,6 +37,7 @@ func RunRest(port uint16) error {
 	return nil
 }
 
+// RunGrpc runs the grpc api
 func RunGrpc(port uint16) error {
 	rps, _ := postgresql.NewUserRepository()
 	srv := user_service.NewUserService(rps)

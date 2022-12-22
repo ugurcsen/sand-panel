@@ -23,19 +23,20 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Println("serve called")
 
-		//Rest API
+		// Rest API
 		restChan := make(chan error)
 		go func() {
 			err := api.RunRest(restPort)
 			restChan <- err
 		}()
-		//GRPC API
+		// GRPC API
 		grpcChan := make(chan error)
 		go func() {
 			err := api.RunGrpc(grpcPort)
 			grpcChan <- err
 		}()
 
+		// Wait for any error
 		err := make(chan error)
 		go func() {
 			err <- <-restChan
@@ -61,10 +62,4 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func errorPanic(err error) {
-	if err != nil {
-		panic(err)
-	}
 }

@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package networks;
+
+option go_package = "./pb";
+
+service NetworkService {
+  rpc ListNetworks(Empty) returns (Empty) {}
+  rpc GetNetworks(Empty) returns (Empty) {}
+  rpc UpdateNetworks(Empty) returns (Empty) {}
+  rpc CreateNetworks(Empty) returns (Empty) {}
+  rpc DeleteNetworks(Empty) returns (Empty) {}
+}
+
+message ListNetworksRequest {
+  string Owner = 1;
+  optional CollectionSortableField SortBy = 2;
+  optional bool SortAsc = 3;
+}
+
+message ListNetworksResponse {
+  Error Error = 1;
+  repeated Network Networks = 2;
+}
+
+message Network {
+  string Id = 1;
+  string Name = 2;
+  string Owner = 3;
+  string Created = 4;
+  string Updated = 5;
+  string Subnet = 6;
+  string Gateway = 7;
+  string Driver = 8;
+  repeated string Labels = 9;
+}
+
+message GetNetworkRequest {
+  string Id = 1;
+}
+
+message GetNetworkResponse {
+  Error Error = 1;
+  Network Network = 2;
+}
+
+message UpdateNetworkRequest {
+  string Id = 1;
+  string Name = 2;
+  string Owner = 3;
+  string Created = 4;
+  string Updated = 5;
+  string Subnet = 6;
+  string Gateway = 7;
+  string Driver = 8;
+  repeated string Labels = 9;
+}
+
+message UpdateNetworkResponse {
+  Error Error = 1;
+  bool Success = 2;
+}
+
+message CreateNetworkRequest {
+  string Name = 1;
+  string Owner = 2;
+  string Created = 3;
+  string Updated = 4;
+  string Subnet = 5;
+  string Gateway = 6;
+  string Driver = 7;
+  repeated string Labels = 8;
+}
+
+message CreateNetworkResponse {
+  Error Error = 1;
+  bool Success = 2;
+}
+
+message DeleteNetworkRequest {
+  string Id = 1;
+}
+
+message DeleteNetworkResponse {
+  Error Error = 1;
+  bool Success = 2;
+}
+
+message Empty {
+
+}
+
+message Error {
+  repeated string Message = 1;
+  repeated uint64 Code = 2;
+}
+
+enum CollectionSortableField {
+  ID = 0;
+  NAME = 1;
+  OWNER = 3;
+  DRIVER = 4;
+  SCOPE = 5;
+  CREATED_AT = 6;
+  UPDATED_AT = 7;
+}

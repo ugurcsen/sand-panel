@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package images;
+
+option go_package = "./pb";
+
+service ImageService {
+  rpc ListImages(Empty) returns (Empty) {}
+  rpc GetImage(Empty) returns (Empty) {}
+  rpc UpdateImage(Empty) returns (Empty) {}
+  rpc CreateImage(Empty) returns (Empty) {}
+  rpc DeleteImage(Empty) returns (Empty) {}
+}
+
+message Empty {
+
+}
+
+message Error {
+  repeated string Message = 1;
+  repeated uint64 Code = 2;
+}

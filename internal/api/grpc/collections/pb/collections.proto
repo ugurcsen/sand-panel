@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package collections;
+
+option go_package = "./pb";
+
+service CollectionService {
+  rpc CreateCollection(CreateCollectionRequest) returns (CreateCollectionResponse) {}
+  rpc GetCollection(GetCollectionRequest) returns (GetCollectionResponse) {}
+  rpc ListCollections(ListCollectionsRequest) returns (ListCollectionsResponse) {}
+  rpc DeleteCollection(DeleteCollectionRequest) returns (DeleteCollectionResponse) {}
+  rpc UpdateCollection(UpdateCollectionRequest) returns (UpdateCollectionResponse) {}
+  rpc CollectionAction(CollectionActionRequest) returns (stream CollectionActionResponse) {}
+}
+
+message CreateCollectionRequest {
+  string Name = 1;
+  string Description = 2;
+  string Owner = 3;
+}
+
+message CreateCollectionResponse {
+  Error Error = 1;
+  bool Success = 2;
+  string Id = 3;
+}
+
+message GetCollectionRequest {
+  string Id = 1;
+}
+
+message GetCollectionResponse {
+  Error Error = 1;
+  Collection Collection = 2;
+}
+
+message ListCollectionsRequest {
+  string Owner = 1;
+  uint64 Limit = 2;
+  uint64 Offset = 3;
+  optional CollectionSortableField SortBy = 4;
+  optional bool SortAsc = 5;
+  optional SearchTerms SearchTerms = 6;
+}
+
+message ListCollectionsResponse {
+  Error Error = 1;
+  repeated Collection Collections = 2;
+}
+
+message DeleteCollectionRequest {
+  string Id = 1;
+}
+
+message DeleteCollectionResponse {
+  Error Error = 1;
+  bool Success = 2;
+}
+
+message UpdateCollectionRequest {
+  string Id = 1;
+  string Name = 2;
+  string Description = 3;
+}
+
+message UpdateCollectionResponse {
+  Error Error = 1;
+  bool Success = 2;
+}
+
+message CollectionActionRequest {
+  string Id = 1;
+  CollectionAction Action = 2;
+}
+
+message CollectionActionResponse {
+  Error Error = 1;
+  string Message = 2;
+}
+
+message Collection {
+  string Id = 1;
+  string Name = 2;
+  string Description = 3;
+  string Owner = 4;
+  CollectionStatus Status = 5;
+  string CreatedAt = 6;
+  string UpdatedAt = 7;
+}
+
+message SearchTerms {
+  optional string Id = 1;
+  optional string Name = 2;
+  optional string Owner = 3;
+}
+
+message Error {
+  repeated string Message = 1;
+  repeated uint64 Code = 2;
+}
+
+enum CollectionAction {
+  START = 0;
+  STOP = 1;
+  RESTART = 2;
+}
+
+enum CollectionStatus {
+  STOPPED = 0;
+  RUNNING = 1;
+  PARTIALLY_RUNNING = 2;
+  ERROR = 3;
+}
+
+enum CollectionSortableField {
+  ID = 0;
+  NAME = 1;
+  DESCRIPTION = 2;
+  OWNER = 3;
+  STATUS = 4;
+  CREATED_AT = 5;
+  UPDATED_AT = 6;
+}

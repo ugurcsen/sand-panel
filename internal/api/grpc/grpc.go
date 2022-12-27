@@ -30,7 +30,7 @@ type Options struct {
 func (g *grpc) RegisterServices(services interface{}) error {
 	if s, ok := services.(*Services); ok {
 		g.services = s
-		users.RegisterUsersServer(s.UserService, g.server)
+		users.RegisterServer(s.UserService, g.server)
 		return nil
 	}
 

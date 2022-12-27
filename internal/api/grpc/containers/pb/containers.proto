@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+package containers;
+
+option go_package = "./pb";
+
+service ContainerService {
+  rpc ListContainers(ListContainerRequest) returns (ListContainerResponse);
+  rpc GetContainer(GetContainerRequest) returns (GetContainerResponse);
+  rpc UpdateContainer(UpdateContainerRequest) returns (UpdateContainerResponse);
+  rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse);
+  rpc DeleteContainer(DeleteContainerRequest) returns (DeleteContainerResponse);
+  rpc ContainerAction(ContainerActionRequest) returns (ContainerActionResponse);
+  rpc ContainerStats(ContainerStatsRequest) returns (ContainerStatsResponse);
+  rpc ContainerStatsStream(ContainerStatsRequest) returns (stream ContainerStatsResponse);
+}
+
+message ListContainerRequest {
+  string Collection = 1;
+  uint64 Limit = 2;
+  uint64 Offset = 3;
+  optional ContainerSortableField SortBy = 4;
+  optional bool SortAsc = 5;
+  optional SearchTerms SearchTerms = 6;
+}
+
+message ListContainerResponse {
+  Error Error = 1;
+  repeated Container Containers = 2;
+}
+
+message Container {
+  string Id = 2;
+  string Collection = 3;
+  string Name = 4;
+  uint64 CpuUsage = 5;
+  uint64 MemoryUsage = 6;
+  string CreatedAt = 7;
+  string UpdatedAt = 8;
+}
+
+message GetContainerRequest {
+  string Collection = 1;
+  string Id = 2;
+}
+
+message GetContainerResponse {
+  Error Error = 1;
+  string Id = 2;
+  string Collection = 3;
+  string Name = 4;
+  uint64 CpuUsage = 5;
+  uint64 MemoryUsage = 6;
+  string Image = 7;
+  string ImageId = 8;
+  string ImageVersion = 9;
+}
+
+message UpdateContainerRequest {
+  string Collection = 1;
+  string Id = 2;
+  string Name = 3;
+}
+
+message UpdateContainerResponse {
+  Error Error = 1;
+  bool Success = 2;
+  string Id = 3;
+}
+
+message CreateContainerRequest {
+  string Collection = 1;
+  string Name = 2;
+  string ImageId = 3;
+  string Params = 4;
+}
+
+message CreateContainerResponse {
+  Error Error = 1;
+  bool Success = 2;
+  string Id = 3;
+}
+
+message DeleteContainerRequest {
+  string Id = 2;
+}
+
+message DeleteContainerResponse {
+  Error Error = 1;
+  bool Success = 2;
+}
+
+message ContainerActionRequest {
+  string Collection = 1;
+  string Id = 2;
+  ContainerAction Action = 3;
+}
+
+message ContainerActionResponse {
+  Error Error = 1;
+  string Message = 2;
+}
+
+message ContainerStatsRequest {
+  string Id = 2;
+}
+
+message ContainerStatsResponse {
+  Error Error = 1;
+  string Id = 2;
+  uint64 CpuUsage = 3;
+  uint64 MemoryUsage = 4;
+}
+
+message SearchTerms {
+  optional string Id = 1;
+  optional string Name = 2;
+}
+
+message Error {
+  repeated string Message = 1;
+  repeated uint64 Code = 2;
+}
+
+enum ContainerAction {
+  START = 0;
+  STOP = 1;
+  RESTART = 2;
+}
+
+enum ContainerStatus {
+  STOPPED = 0;
+  RUNNING = 1;
+  ERROR = 2;
+}
+
+enum ContainerSortableField {
+  ID = 0;
+  NAME = 1;
+  CPU_USAGE = 2;
+  MEMORY_USAGE = 3;
+  CREATED_AT = 4;
+  UPDATED_AT = 5;
+}

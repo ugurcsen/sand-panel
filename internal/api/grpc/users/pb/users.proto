@@ -4,7 +4,7 @@ package users;
 
 option go_package = "./pb";
 
-service Users {
+service UserService {
   rpc GetUsers (GetUsersRequest) returns (GetUsersResponse) {}
 }
 

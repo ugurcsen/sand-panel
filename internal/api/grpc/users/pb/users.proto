@@ -5,18 +5,84 @@ package users;
 option go_package = "./pb";
 
 service UserService {
-  rpc GetUsers (GetUsersRequest) returns (GetUsersResponse) {}
+  rpc Get (GetRequest) returns (GetResponse) {}
+  rpc Create (CreateRequest) returns (CreateResponse) {}
+  rpc Update (UpdateRequest) returns (UpdateResponse) {}
+  rpc Delete (DeleteRequest) returns (DeleteResponse) {}
 }
 
-message GetUsersRequest {
-  string name = 1;
+enum UserStatus {
+  ACTIVE = 0;
+  INACTIVE = 1;
+  BANNED = 2;
+  SUSPENDED = 3;
 }
 
-message GetUsersResponse {
-  repeated User users = 1;
+enum UserRole {
+  ADMIN = 0;
+  USER = 1;
 }
 
 message User {
-  string name = 1;
-  string email = 2;
+  string Id = 1;
+  string Email = 2;
+  string Name = 3;
+  string Surname = 4;
+  UserStatus Status = 5;
+  UserRole Role = 6;
+}
+
+message Error {
+  repeated string Message = 1;
+  repeated int32 Code = 2;
+}
+
+message GetRequest {
+  optional string Id = 1;
+  optional string Email = 2;
+  optional string Name = 3;
+  optional string Surname = 4;
+  optional UserStatus Status = 5;
+  optional UserRole Role = 6;
+}
+
+message GetResponse {
+  repeated User users = 1;
+}
+
+message CreateRequest {
+  string Email = 1;
+  string Name = 2;
+  string Surname = 3;
+  optional UserStatus Status = 4;
+  optional UserRole Role = 5;
+}
+
+message CreateResponse {
+  Error Error = 1;
+  bool Success = 2;
+  string Id = 3;
+}
+
+message UpdateRequest {
+  string Id = 1;
+  optional string Email = 2;
+  optional string Name = 3;
+  optional string Surname = 4;
+  optional UserStatus Status = 5;
+  optional UserRole Role = 6;
+}
+
+message UpdateResponse {
+  Error Error = 1;
+  bool Success = 2;
+}
+
+message DeleteRequest {
+  string Id = 1;
+}
+
+message DeleteResponse {
+  Error Error = 1;
+  bool Success = 2;
 }

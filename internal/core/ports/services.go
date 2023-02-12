@@ -5,5 +5,5 @@ import (
 )
 
 type UserService interface {
-	List() ([]*domain.User, error)
+	List() ([]domain.User, error)
 }

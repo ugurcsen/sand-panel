@@ -119,7 +119,7 @@ message SearchTerms {
 
 message Error {
   repeated string Message = 1;
-  repeated uint64 Code = 2;
+  repeated int32 Code = 2;
 }
 
 enum ContainerAction {

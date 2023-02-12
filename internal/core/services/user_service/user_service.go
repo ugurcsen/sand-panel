@@ -9,7 +9,7 @@ type userService struct {
 	repository ports.UserRepository
 }
 
-func (u userService) List() ([]*domain.User, error) {
+func (u userService) List() ([]domain.User, error) {
 	return u.repository.List()
 }
 

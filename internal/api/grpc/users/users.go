@@ -41,13 +41,14 @@ func (u *Server) Get(ctx context.Context, request *pb.GetRequest) (*pb.GetRespon
 	}
 
 	usersProto := make([]*pb.User, len(users))
-	for i, user := range users {
-		if user == nil {
-			continue
-		}
+	for i := 0; i < len(users); i++ {
 		usersProto[i] = &pb.User{
-			Name:  user.UserName,
-			Email: *user.Email,
+			Id:      &users[i].Id,
+			Email:   &users[i].Email,
+			Name:    &users[i].Name,
+			Surname: &users[i].Surname,
+			Status:  (*pb.UserStatus)(&users[i].Status),
+			Role:    (*pb.UserRole)(&users[i].Role),
 		}
 	}
 

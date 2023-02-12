@@ -6,6 +6,29 @@ import (
 	"log"
 )
 
+var _ ports.UserRepository = &userRepository{}
+
+var testData = []domain.User{
+	{
+		Id:       "1",
+		Email:    "admin@example.com",
+		Name:     "Admin",
+		Surname:  "",
+		Password: "1234",
+		Role:     domain.UserRoles_ADMIN,
+		Status:   domain.UserStatus_ACTIVE,
+	},
+	{
+		Id:       "2",
+		Email:    "user@example.com",
+		Name:     "User",
+		Surname:  "",
+		Password: "4321",
+		Role:     domain.UserRoles_USER,
+		Status:   domain.UserStatus_ACTIVE,
+	},
+}
+
 type userRepository struct {
 	db *db
 }
@@ -25,18 +48,19 @@ func (p userRepository) GetByUserNameAndPassword(userName, password string) (*do
 	panic("implement me")
 }
 
-func (p userRepository) List() ([]*domain.User, error) {
+func (p userRepository) List() ([]domain.User, error) {
+	return testData, nil
 	rows, err := p.db.Query("SELECT id, user_name, password, email FROM users")
-	users := make([]*domain.User, 0)
-	tempUser := &domain.User{}
 	if err != nil {
 		return nil, err
 	}
+	var users []domain.User
+	tempUser := domain.User{}
 
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&tempUser.ID, &tempUser.UserName, &tempUser.Password, &tempUser.Email); err != nil {
+		if err = rows.Scan(&tempUser.Id, &tempUser.Email, &tempUser.Password, &tempUser.Email); err != nil {
 			log.Fatal(err)
 		}
 		users = append(users, tempUser)

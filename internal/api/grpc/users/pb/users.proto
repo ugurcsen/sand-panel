@@ -24,12 +24,12 @@ enum UserRole {
 }
 
 message User {
-  string Id = 1;
-  string Email = 2;
-  string Name = 3;
-  string Surname = 4;
-  UserStatus Status = 5;
-  UserRole Role = 6;
+  optional string Id = 1;
+  optional string Email = 2;
+  optional string Name = 3;
+  optional string Surname = 4;
+  optional UserStatus Status = 5;
+  optional UserRole Role = 6;
 }
 
 message Error {

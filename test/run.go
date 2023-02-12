@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
 	"os"
 	"time"
@@ -20,7 +21,9 @@ func Run() {
 	}
 
 	// List all container-engines
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{All: true})
+	args := filters.NewArgs()
+	args.Add("label", "com.docker.compose.project=ugurcsencom")
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{All: true, Filters: args})
 	errorCheck(err)
 	var stat types.ContainerStats
 	a := types.Stats{}

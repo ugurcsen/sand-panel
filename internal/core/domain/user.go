@@ -13,15 +13,19 @@ type User struct {
 type UserStatus int32
 
 const (
-	UserStatus_ACTIVE UserStatus = iota
-	UserStatus_INACTIVE
-	UserStatus_BANNED
-	UserStatus_SUSPENDED
+	UserStatusActive UserStatus = iota
+	UserStatusInactive
+	UserStatusBanned
+	UserStatusSuspended
 )
+
+func (s UserStatus) String() string {
+	return [...]string{"ACTIVE", "INACTIVE", "BANNED", "SUSPENDED"}[s]
+}
 
 type UserRoles int32
 
 const (
-	UserRoles_ADMIN UserRoles = iota
-	UserRoles_USER
+	UserRolesAdmin UserRoles = iota
+	UserRolesUser
 )

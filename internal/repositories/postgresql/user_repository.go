@@ -15,8 +15,8 @@ var testData = []domain.User{
 		Name:     "Admin",
 		Surname:  "",
 		Password: "1234",
-		Role:     domain.UserRoles_ADMIN,
-		Status:   domain.UserStatus_ACTIVE,
+		Role:     domain.UserRolesAdmin,
+		Status:   domain.UserStatusActive,
 	},
 	{
 		Id:       "2",
@@ -24,8 +24,8 @@ var testData = []domain.User{
 		Name:     "User",
 		Surname:  "",
 		Password: "4321",
-		Role:     domain.UserRoles_USER,
-		Status:   domain.UserStatus_ACTIVE,
+		Role:     domain.UserRolesUser,
+		Status:   domain.UserStatusActive,
 	},
 }
 

@@ -55,10 +55,10 @@ func (u *Server) Get(ctx context.Context, request *pb.GetRequest) (*pb.GetRespon
 	return &pb.GetResponse{Users: usersProto}, nil
 }
 
-func newServer(service ports.UserService, server grpc.Server) pb.UserServiceServer {
+func newServer(service ports.UserService, server *grpc.Server) pb.UserServiceServer {
 	return &Server{service: service}
 }
 
 func RegisterServer(service ports.UserService, server *grpc.Server) {
-	pb.RegisterUserServiceServer(server, newServer(service, *server))
+	pb.RegisterUserServiceServer(server, newServer(service, server))
 }

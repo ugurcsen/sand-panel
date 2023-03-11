@@ -70,6 +70,14 @@ func TestDocker_CreateCollection(t *testing.T) {
 	if collection.UserId != "TestUser" {
 		t.Error("collection user id not equal")
 	}
+
+	if _, err = os.Stat(os.Getenv("HOME") + "/sand-panel-test-folder/TestUser/TestUser_test"); err != nil {
+		t.Error("collection folder not created")
+	}
+
+	if _, err = os.Stat(os.Getenv("HOME") + "/sand-panel-test-folder/TestUser/TestUser_test/docker-compose.yml"); err != nil {
+		t.Error("docker-compose.yml not created")
+	}
 }
 
 func TestDocker_StartCollection(t *testing.T) {

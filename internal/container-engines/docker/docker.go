@@ -67,7 +67,7 @@ func (d docker) ListCollections(userId string) ([]*domain.Collection, error) {
 
 func (d docker) CreateCollection(collection *domain.Collection) (*domain.Collection, error) {
 	var userPath = path.Join(d.BaseDir, collection.UserId)
-	var collectionPath = path.Join(userPath, collection.Id)
+	var collectionPath = path.Join(userPath, collection.UserId+"_"+collection.Id)
 
 	if _, err := os.Stat(userPath); err != nil {
 		err = os.MkdirAll(userPath, 0755)
@@ -98,7 +98,6 @@ func (d docker) CreateCollection(collection *domain.Collection) (*domain.Collect
 	if err != nil {
 		return nil, err
 	}
-
 	return collection, nil
 }
 

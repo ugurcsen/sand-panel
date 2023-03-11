@@ -5,6 +5,8 @@ type Service struct {
 	Name         string
 	CollectionId string
 	Collection   *Collection
+	Image        string
+	Host         string
 }
 
 type ServiceStats struct {

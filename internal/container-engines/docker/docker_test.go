@@ -3,8 +3,26 @@ package docker
 import (
 	"github.com/ugurcsen/sand-panel/internal/core/domain"
 	"os"
+	"path"
 	"testing"
 )
+
+var testPath = os.Getenv("HOME") + "/sand-panel-test-folder"
+
+var d = New(testPath)
+var testCollection = &domain.Collection{
+	Id:     "test",
+	Name:   "TestCollection",
+	UserId: "TestUser",
+	Services: []*domain.Service{
+		{
+			Id:    "test",
+			Name:  "TestService",
+			Image: "nginx",
+			Host:  "test.local",
+		},
+	},
+}
 
 func TestDocker_GetService(t *testing.T) {
 
@@ -47,16 +65,10 @@ func TestDocker_ListCollections(t *testing.T) {
 }
 
 func TestDocker_CreateCollection(t *testing.T) {
-	collection, err := New(os.Getenv("HOME") + "/sand-panel-test-folder").CreateCollection(&domain.Collection{
-		Id:       "test",
-		Name:     "TestCollection",
-		UserId:   "TestUser",
-		User:     nil,
-		Services: nil,
-	})
+	collection, err := d.CreateCollection(testCollection)
 
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 
 	if collection.Id != "test" {
@@ -71,12 +83,18 @@ func TestDocker_CreateCollection(t *testing.T) {
 		t.Error("collection user id not equal")
 	}
 
-	if _, err = os.Stat(os.Getenv("HOME") + "/sand-panel-test-folder/TestUser/TestUser_test"); err != nil {
+	if _, err = os.Stat(path.Join(testPath, "/TestUser/TestUser_test")); err != nil {
 		t.Error("collection folder not created")
 	}
 
-	if _, err = os.Stat(os.Getenv("HOME") + "/sand-panel-test-folder/TestUser/TestUser_test/docker-compose.yml"); err != nil {
+	if _, err = os.Stat(path.Join(testPath, "/TestUser/TestUser_test/docker-compose.yml")); err != nil {
 		t.Error("docker-compose.yml not created")
+	}
+
+	collection, err = d.CreateCollection(testCollection)
+
+	if err == nil {
+		t.Error("collection already exists but no error")
 	}
 }
 

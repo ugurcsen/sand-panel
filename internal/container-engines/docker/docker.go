@@ -1,10 +1,8 @@
 package docker
 
 import (
-	"errors"
 	"github.com/ugurcsen/sand-panel/internal/core/domain"
 	"github.com/ugurcsen/sand-panel/internal/core/ports"
-	"gopkg.in/yaml.v2"
 	"os"
 	"path"
 )
@@ -65,40 +63,27 @@ func (d docker) ListCollections(userId string) ([]*domain.Collection, error) {
 	panic("implement me")
 }
 
-func (d docker) CreateCollection(collection *domain.Collection) (*domain.Collection, error) {
-	var userPath = path.Join(d.BaseDir, collection.UserId)
-	var collectionPath = path.Join(userPath, collection.UserId+"_"+collection.Id)
+func (d docker) CreateCollection(c *domain.Collection) (*domain.Collection, error) {
+	var collectionPath = d.getCollectionPath(c)
 
-	if _, err := os.Stat(userPath); err != nil {
-		err = os.MkdirAll(userPath, 0755)
-		if err != nil {
-			return nil, err
-		}
-	}
 	if _, err := os.Stat(collectionPath); err == nil {
-		return nil, errors.New("collection already exists")
+		return nil, ErrorCollectionAlreadyExists
 	}
 
-	err := os.Mkdir(collectionPath, 0755)
-	if err != nil {
-		return nil, err
+	if err := os.MkdirAll(collectionPath, 0755); err != nil {
+		return nil, ErrorCollectionNotCreated
 	}
 
 	f, err := os.Create(path.Join(collectionPath, "docker-compose.yml"))
 	if err != nil {
 		return nil, err
 	}
-	comp := map[string]interface{}{
-		"version":  "3.7",
-		"services": nil,
-	}
-	//err = comp.ToYaml(f)
-	encode := yaml.NewEncoder(f)
-	err = encode.Encode(comp)
+
+	err = composeYamlBuilder(c, f)
 	if err != nil {
 		return nil, err
 	}
-	return collection, nil
+	return c, nil
 }
 
 func (d docker) StartCollection(collectionId string) (domain.Pipes, error) {

@@ -96,6 +96,8 @@ func TestDocker_CreateCollection(t *testing.T) {
 	if err == nil {
 		t.Error("collection already exists but no error")
 	}
+
+	os.RemoveAll(testPath)
 }
 
 func TestDocker_StartCollection(t *testing.T) {

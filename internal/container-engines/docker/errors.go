@@ -13,6 +13,11 @@ const (
 	ErrorCollectionNotRestarted
 	ErrorCollectionNotPaused
 	ErrorCollectionNotUnPaused
+	ErrorCollectionFileNotFound
+	ErrorCollectionFileAlreadyExists
+	ErrorCollectionFileNotCreated
+	ErrorCollectionFileNotDeleted
+	ErrorCollectionFileNotUpdated
 )
 
 func (e CollectionError) Error() string {
@@ -37,6 +42,16 @@ func (e CollectionError) Error() string {
 		return "collection not paused"
 	case ErrorCollectionNotUnPaused:
 		return "collection not un paused"
+	case ErrorCollectionFileNotFound:
+		return "collection file not found"
+	case ErrorCollectionFileAlreadyExists:
+		return "collection file already exists"
+	case ErrorCollectionFileNotCreated:
+		return "collection file not created"
+	case ErrorCollectionFileNotDeleted:
+		return "collection file not deleted"
+	case ErrorCollectionFileNotUpdated:
+		return "collection file not updated"
 	}
 	return ""
 }

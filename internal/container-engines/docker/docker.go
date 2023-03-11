@@ -1,10 +1,10 @@
 package docker
 
 import (
+	"github.com/pkg/errors"
 	"github.com/ugurcsen/sand-panel/internal/core/domain"
 	"github.com/ugurcsen/sand-panel/internal/core/ports"
 	"os"
-	"path"
 )
 
 var _ ports.ContainerEngine = &docker{}
@@ -67,21 +67,22 @@ func (d docker) CreateCollection(c *domain.Collection) (*domain.Collection, erro
 	var collectionPath = d.getCollectionPath(c)
 
 	if _, err := os.Stat(collectionPath); err == nil {
-		return nil, ErrorCollectionAlreadyExists
+		return nil, errors.Wrap(ErrorCollectionAlreadyExists, collectionPath)
 	}
 
 	if err := os.MkdirAll(collectionPath, 0755); err != nil {
-		return nil, ErrorCollectionNotCreated
+		return nil, errors.Wrap(ErrorCollectionNotCreated, collectionPath)
 	}
 
-	f, err := os.Create(path.Join(collectionPath, "docker-compose.yml"))
+	composePath := d.getComposePath(c)
+	f, err := os.Create(composePath)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrorCollectionFileNotCreated, composePath)
 	}
 
 	err = composeYamlBuilder(c, f)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(ErrorCollectionFileNotCreated, err.Error())
 	}
 	return c, nil
 }

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestBuildYaml(t *testing.T) {
+func TestComposeYamlBuilder(t *testing.T) {
 	tf, err := os.CreateTemp("", "test")
 	if err != nil {
 		t.Fatal(err)

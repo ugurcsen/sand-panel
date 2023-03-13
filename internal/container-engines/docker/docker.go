@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/ugurcsen/sand-panel/internal/core/domain"
 	"github.com/ugurcsen/sand-panel/internal/core/ports"
+	"log"
 	"os"
 )
 
@@ -79,6 +80,7 @@ func (d docker) CreateCollection(c *domain.Collection) (*domain.Collection, erro
 	if err != nil {
 		return nil, errors.Wrap(ErrorCollectionFileNotCreated, composePath)
 	}
+	defer d.handleDefer(f.Close)
 
 	err = composeYamlBuilder(c, f)
 	if err != nil {
@@ -114,4 +116,10 @@ func (d docker) DownCollection(collectionId string) (domain.Pipes, error) {
 
 func New(baseDir string) ports.ContainerEngine {
 	return &docker{BaseDir: baseDir}
+}
+
+func (d docker) handleDefer(f func() error) {
+	if err := f(); err != nil {
+		log.Println(err.Error())
+	}
 }

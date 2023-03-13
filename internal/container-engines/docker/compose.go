@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// composeYamlBuilder builds a docker-compose.yml file from a collection
 type service struct {
 	Image    string            `yaml:"image,omitempty"`
 	Port     string            `yaml:"port,omitempty"`
@@ -16,18 +17,21 @@ type service struct {
 	Volumes  []string          `yaml:"volumes,omitempty"`
 }
 
+// network is a docker network for a collection
 type network struct {
 	Name     string `yaml:"name,omitempty"`
 	External bool   `yaml:"external,omitempty"`
 	Driver   string `yaml:"driver,omitempty"`
 }
 
+// compose is a docker-compose.yml file
 type compose struct {
 	Version  string             `yaml:"version,omitempty"`
 	Services map[string]service `yaml:"services,omitempty"`
 	Networks map[string]network `yaml:"networks,omitempty"`
 }
 
+// composeYamlBuilder builds a docker-compose.yml file from a collection
 func composeYamlBuilder(c *domain.Collection, f io.Writer) error {
 	comp := compose{}
 

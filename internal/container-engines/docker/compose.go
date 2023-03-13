@@ -13,11 +13,13 @@ type service struct {
 	Labels   map[string]string `yaml:"labels,omitempty"`
 	Networks []string          `yaml:"networks,omitempty"`
 	Runtime  string            `yaml:"runtime,omitempty"`
+	Volumes  []string          `yaml:"volumes,omitempty"`
 }
 
 type network struct {
 	Name     string `yaml:"name,omitempty"`
 	External bool   `yaml:"external,omitempty"`
+	Driver   string `yaml:"driver,omitempty"`
 }
 
 type compose struct {
@@ -42,21 +44,39 @@ func composeYamlBuilder(c *domain.Collection, f io.Writer) error {
 		for _, h := range s.Hosts {
 			hosts = append(hosts, "Host(`"+h+"`)")
 		}
-		comp.Services[s.Id] = service{
+		serv := service{
 			Image:   s.Image,
 			Runtime: "runsc",
 			Networks: []string{
-				"trafeik",
+				"default",
 			},
 			Labels: map[string]string{
-				"traefik.enable":                         "true",
-				"traefik.http.routers." + s.Id + ".rule": strings.Join(hosts, " || "),
+				"sand.panel.collection": c.Id,
+				"sand.panel.service":    s.Id,
+				"sand.panel.user":       c.UserId,
 			},
 		}
+
+		for _, v := range s.Volumes {
+			serv.Volumes = append(serv.Volumes, v.From+":"+v.To)
+		}
+
+		if len(hosts) > 0 {
+			serv.Networks = append(serv.Networks, "traefik")
+			serv.Labels["traefik.enable"] = "true"
+			serv.Labels["traefik.http.routers."+s.Id+".entrypoints"] = "web, websecure"
+			serv.Labels["traefik.http.routers."+s.Id+".rule"] = strings.Join(hosts, " || ")
+		}
+
+		comp.Services[s.Id] = serv
 	}
 
-	comp.Networks["trafeik"] = network{
-		Name:     "trafeiknet",
+	comp.Networks["default"] = network{
+		Driver: "bridge",
+	}
+
+	comp.Networks["traefik"] = network{
+		Name:     "traefiknet",
 		External: true,
 	}
 

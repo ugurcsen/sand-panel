@@ -20,6 +20,10 @@ var testCollection = &domain.Collection{
 			Name:  "TestService",
 			Image: "nginx",
 			Hosts: []string{"test1.local", "test2.local"},
+			Volumes: []domain.Volume{
+				{From: "/var/www/html", To: "/var/www/html"},
+				{From: "/var/www/html2", To: "/var/www/html2"},
+			},
 		},
 	},
 }
@@ -97,7 +101,9 @@ func TestDocker_CreateCollection(t *testing.T) {
 		t.Error("collection already exists but no error")
 	}
 
-	os.RemoveAll(testPath)
+	if err = os.RemoveAll(testPath); err != nil {
+		t.Error("test folder not removed")
+	}
 }
 
 func TestDocker_StartCollection(t *testing.T) {

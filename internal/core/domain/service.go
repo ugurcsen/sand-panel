@@ -7,9 +7,15 @@ type Service struct {
 	Collection   *Collection
 	Image        string
 	Hosts        []string
+	Volumes      []Volume
 }
 
 type ServiceStats struct {
 	CPUUsage    uint64
 	MemoryUsage uint64
+}
+
+type Volume struct {
+	From string
+	To   string
 }

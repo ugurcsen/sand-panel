@@ -6,7 +6,7 @@ type Service struct {
 	CollectionId string
 	Collection   *Collection
 	Image        string
-	Host         string
+	Hosts        []string
 }
 
 type ServiceStats struct {

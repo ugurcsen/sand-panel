@@ -3,7 +3,8 @@ package docker
 import (
 	"github.com/ugurcsen/sand-panel/internal/core/domain"
 	"gopkg.in/yaml.v3"
-	"os"
+	"io"
+	"strings"
 )
 
 type service struct {
@@ -25,7 +26,7 @@ type compose struct {
 	Networks map[string]network `yaml:"networks,omitempty"`
 }
 
-func composeYamlBuilder(c *domain.Collection, f *os.File) error {
+func composeYamlBuilder(c *domain.Collection, f io.Writer) error {
 	comp := compose{}
 
 	if len(c.Services) > 0 {
@@ -37,6 +38,10 @@ func composeYamlBuilder(c *domain.Collection, f *os.File) error {
 	comp.Version = "3.7"
 
 	for _, s := range c.Services {
+		var hosts []string
+		for _, h := range s.Hosts {
+			hosts = append(hosts, "Host(`"+h+"`)")
+		}
 		comp.Services[s.Id] = service{
 			Image:   s.Image,
 			Runtime: "runsc",
@@ -45,13 +50,13 @@ func composeYamlBuilder(c *domain.Collection, f *os.File) error {
 			},
 			Labels: map[string]string{
 				"traefik.enable":                         "true",
-				"traefik.http.routers." + s.Id + ".rule": "Host(`" + s.Host + "`)",
+				"traefik.http.routers." + s.Id + ".rule": strings.Join(hosts, " || "),
 			},
 		}
 	}
 
 	comp.Networks["trafeik"] = network{
-		Name:     "trafeik_default",
+		Name:     "trafeiknet",
 		External: true,
 	}
 

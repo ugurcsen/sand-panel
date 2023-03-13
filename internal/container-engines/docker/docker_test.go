@@ -19,7 +19,7 @@ var testCollection = &domain.Collection{
 			Id:    "test",
 			Name:  "TestService",
 			Image: "nginx",
-			Host:  "test.local",
+			Hosts: []string{"test1.local", "test2.local"},
 		},
 	},
 }

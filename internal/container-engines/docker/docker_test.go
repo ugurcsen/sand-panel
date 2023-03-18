@@ -21,9 +21,10 @@ var testCollection = &domain.Collection{
 			Image: "nginx",
 			Hosts: []string{"test1.local", "test2.local"},
 			Volumes: []domain.Volume{
-				{From: "/var/www/html", To: "/var/www/html"},
-				{From: "/var/www/html2", To: "/var/www/html2"},
+				{Name: "html", Path: "/usr/share/nginx/html"},
 			},
+			Env:  domain.ServiceEnvStaging,
+			Port: "80",
 		},
 	},
 }

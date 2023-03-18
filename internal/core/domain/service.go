@@ -8,6 +8,8 @@ type Service struct {
 	Image        string
 	Hosts        []string
 	Volumes      []Volume
+	Port         string
+	Env          ServiceEnv
 }
 
 type ServiceStats struct {
@@ -16,6 +18,6 @@ type ServiceStats struct {
 }
 
 type Volume struct {
-	From string
-	To   string
+	Name string
+	Path string
 }

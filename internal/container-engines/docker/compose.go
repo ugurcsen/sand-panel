@@ -4,6 +4,7 @@ import (
 	"github.com/ugurcsen/sand-panel/internal/core/domain"
 	"gopkg.in/yaml.v3"
 	"io"
+	"path"
 	"strings"
 )
 
@@ -62,14 +63,17 @@ func composeYamlBuilder(c *domain.Collection, f io.Writer) error {
 		}
 
 		for _, v := range s.Volumes {
-			serv.Volumes = append(serv.Volumes, v.From+":"+v.To)
+			serv.Volumes = append(serv.Volumes, "./"+path.Join(s.Name, v.Name)+":"+v.Path)
 		}
 
 		if len(hosts) > 0 {
 			serv.Networks = append(serv.Networks, "traefik")
 			serv.Labels["traefik.enable"] = "true"
-			serv.Labels["traefik.http.routers."+s.Id+".entrypoints"] = "web, websecure"
-			serv.Labels["traefik.http.routers."+s.Id+".rule"] = strings.Join(hosts, " || ")
+			serv.Labels["traefik.http.routers."+c.UserId+"_"+c.Id+".entrypoints"] = "web, websecure"
+			serv.Labels["traefik.http.routers."+c.UserId+"_"+c.Id+".rule"] = strings.Join(hosts, " || ")
+			serv.Labels["traefik.http.routers."+c.UserId+"_"+c.Id+".tls"] = "true"
+			serv.Labels["traefik.http.routers."+c.UserId+"_"+c.Id+".tls.certresolver"] = s.Env.String()
+			serv.Labels["traefik.http.services."+c.UserId+"_"+c.Id+".loadbalancer.server.port"] = s.Port
 		}
 
 		comp.Services[s.Id] = serv

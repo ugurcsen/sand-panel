@@ -12,6 +12,7 @@ var _ ports.ContainerEngine = &docker{}
 
 type docker struct {
 	BaseDir string
+	log     *log.Logger
 }
 
 func (d docker) GetService(serviceId string) (*domain.Service, error) {
@@ -115,11 +116,15 @@ func (d docker) DownCollection(collectionId string) (domain.Pipes, error) {
 }
 
 func New(baseDir string) ports.ContainerEngine {
-	return &docker{BaseDir: baseDir}
+	return &docker{BaseDir: baseDir, log: log.Default()}
+}
+
+func NewWithLogger(baseDir string, logger *log.Logger) ports.ContainerEngine {
+	return &docker{BaseDir: baseDir, log: logger}
 }
 
 func (d docker) handleDefer(f func() error) {
 	if err := f(); err != nil {
-		log.Println(err.Error())
+		d.log.Println(err.Error())
 	}
 }

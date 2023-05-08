@@ -1,5 +1,7 @@
 package domain
 
+import "io"
+
 type Service struct {
 	Id           string `json:"Id"`
 	Name         string
@@ -20,4 +22,11 @@ type ServiceStats struct {
 type Volume struct {
 	Name string
 	Path string
+}
+
+type ServiceOperationResponse struct {
+	Stdout io.Reader
+	Stderr io.Reader
+	Stdin  io.Writer
+	Wait   func()
 }

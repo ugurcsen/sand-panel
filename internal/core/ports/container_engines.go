@@ -5,23 +5,18 @@ import (
 )
 
 type ContainerEngine interface {
-	GetService(serviceId string) (*domain.Service, error)
-	ListServices(collectionId string) ([]*domain.Service, error)
-	ServiceStats(serviceId string) (*domain.ServiceStats, error)
-	CreateService(service *domain.Service) (*domain.Service, error)
-	AddService(collectionId string, service domain.Service) error
-	DeleteService(serviceId string) error
-	StartService(serviceId string) (domain.Pipes, error)
-	StopService(serviceId string) (domain.Pipes, error)
+	ServiceStats(service *domain.Service) (*domain.ServiceStats, error)
+	CreateService(service *domain.Service) error
+	DeleteService(service *domain.Service) error
+	StartService(service *domain.Service) (*domain.ServiceOperationResponse, error)
+	StopService(service *domain.Service) (*domain.ServiceOperationResponse, error)
 
 	//----------------------------------------------------------------------
 
-	GetCollection(collectionId string) (*domain.Collection, error)
-	ListCollections(userId string) ([]*domain.Collection, error)
 	CreateCollection(collection *domain.Collection) (*domain.Collection, error)
-	StartCollection(collectionId string) (domain.Pipes, error)
-	StopCollection(collectionId string) (domain.Pipes, error)
-	DeleteCollection(collectionId string) error
-	UpCollection(collectionId string) (domain.Pipes, error)
-	DownCollection(collectionId string) (domain.Pipes, error)
+	StartCollection(collection *domain.Collection) (*domain.ServiceOperationResponse, error)
+	StopCollection(collection *domain.Collection) (*domain.ServiceOperationResponse, error)
+	DeleteCollection(collection *domain.Collection) error
+	UpCollection(collection *domain.Collection) (*domain.ServiceOperationResponse, error)
+	DownCollection(collection *domain.Collection) (*domain.ServiceOperationResponse, error)
 }

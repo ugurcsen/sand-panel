@@ -1,6 +1,7 @@
 package docker
 
 import (
+	"github.com/pkg/errors"
 	"github.com/ugurcsen/sand-panel/internal/core/domain"
 	"os"
 	"path"
@@ -120,7 +121,18 @@ func TestDocker_DeleteCollection(t *testing.T) {
 }
 
 func TestDocker_UpCollection(t *testing.T) {
-
+	collection, err := d.CreateCollection(testCollection)
+	if err != nil {
+		if errors.Cause(err) != ErrorCollectionAlreadyExists {
+			t.Fatal(err)
+		}
+		collection = testCollection
+	}
+	pipes, err := d.UpCollection(collection)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = pipes
 }
 
 func TestDocker_DownCollection(t *testing.T) {
